@@ -1,83 +1,22 @@
-"use client";
-import Image from "next/image";
-import Link from "next/link";
-import React, { useEffect } from "react";
-import HeaderActions from "./HeaderActions";
-import TopProgressBar from "@/components/elements/TopProgressBar";
-import { categoryMenu } from "@/data";
-import { useRouter } from "next/router";
+import { getAllCategories } from "@/actions/blog";
+import MainHeaderClient from "./MainHeaderClient";
 
-const Mainheader = () => {
-  const router = useRouter();
-  useEffect(() => {
-    const header = document.querySelector("#desktop_header") as HTMLElement;
-    let lastScrollTop = 0;
-    const scrollFunction = function () {
-      const scrollTop =
-        window.pageYOffset || document.documentElement.scrollTop;
+export default async function MainHeaderWrapper() {
+  // Fetch categories using server action
+  const categoriesResult = await getAllCategories();
 
-      if (scrollTop >= 120) {
-        header.classList.add("shadow-2xl", "py-5", "dark:bg-gray-700");
-        header.classList.remove("py-14", "dark:bg-gray-800");
-      } else {
-        header.classList.remove("shadow-2xl", "py-5", "dark:bg-gray-700");
-        header.classList.add("py-14", "dark:bg-gray-800");
-      }
-      lastScrollTop = scrollTop;
-    };
-    window.addEventListener("scroll", scrollFunction);
+  // Transform categories to match the expected format
+  const categories = categoriesResult.success
+    ? categoriesResult.data.map((category) => ({
+        name: category.name,
+        link: `/category/${category.slug}-${category.id}`,
+      }))
+    : [
+        { name: "Company News", link: "/category/company-news" },
+        { name: "Product Updates", link: "/category/product-updates" },
+        { name: "Marketing News", link: "/category/marketing-news" },
+        { name: "Ecommerce Tips", link: "/category/ecommerce-tips" },
+      ]; // Fallback to static data if fetch fails
 
-    return () => {
-      window.removeEventListener("scroll", scrollFunction);
-    };
-  }, []);
-  return (
-    <>
-      <TopProgressBar width="100%" />
-      <header
-        className="sticky top-0 bg-white dark:bg-gray-800 py-14 transition-all duration-500 ease-in-out shadow-black/5 hidden lg:flex z-10"
-        id="desktop_header"
-      >
-        <div className="flex items-center justify-between max-w-[1000px] w-full mx-auto  relative  ">
-          <Link href={"/"}>
-            <Image
-              alt="Xedla Pay"
-              src={"/img/brand/Xedla Logo.png"}
-              width={100}
-              height={44}
-              className="dark:hidden"
-            />
-            <Image
-              alt="Xedla Pay"
-              src="/img/brand/Xedla Logo Footer.png"
-              width={44}
-              height={44}
-              className="hidden dark:block"
-            />
-          </Link>
-
-          <nav className="flex gap-8 items-center">
-            {categoryMenu.map((item) => (
-              <div key={item.name}>
-                <Link
-                  href={`/category${item.link}`}
-                  className={`group py-3 flex gap-1 items-center relative dark:text-gray-100 dark:hover:text-secondary-70 hover:text-primary-70 transition-all duration-300 ease-in-out ${
-                    `/${router.query.slug}` === item.link
-                      ? "font-bold text-primary-full dark:text-secondary-50"
-                      : "text-gray-700 "
-                  }`}
-                >
-                  <p className="text-base  ">{item.name}</p>
-                </Link>
-              </div>
-            ))}
-          </nav>
-
-          <HeaderActions />
-        </div>
-      </header>
-    </>
-  );
-};
-
-export default Mainheader;
+  return <MainHeaderClient categories={categories} />;
+}
