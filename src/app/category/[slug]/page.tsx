@@ -63,7 +63,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   const { slug } = await params;
   const { page: pageParam, per_page: perPageParam } = await searchParams;
   const page = Number(pageParam) || 1;
-  const perPage = Number(perPageParam) || 20; // Changed to 20 posts per page
+  const perPage = Number(perPageParam) || 18; // Changed to 18 posts per page for categories
   const categorySlug = slug.split("-")[0]; // Extract slug before ID
 
   const result = await getCategoryPosts(categorySlug, page, perPage);

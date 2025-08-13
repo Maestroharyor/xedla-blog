@@ -1,9 +1,8 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import HeaderActions from "./HeaderActions";
-import TopProgressBar from "@/components/elements/TopProgressBar";
 import { useRouter, usePathname } from "next/navigation";
 
 type Category = {
@@ -44,7 +43,6 @@ const MainHeaderClient = ({ categories }: MainHeaderClientProps) => {
 
   return (
     <>
-      <TopProgressBar width="100%" />
       <header
         className="sticky top-0 bg-white dark:bg-gray-800 py-14 transition-all duration-500 ease-in-out shadow-black/5 hidden lg:flex z-10"
         id="desktop_header"

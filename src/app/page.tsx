@@ -36,19 +36,17 @@ export const metadata: Metadata = {
   },
 };
 
-export const revalidate = 10; // ISR revalidation every 10 seconds
+export const revalidate = 60; // ISR revalidation every 10 minutes
 
 interface BlogPageProps {
   searchParams: SearchParams;
 }
 
 export default async function HomePage({ searchParams }: BlogPageProps) {
-  // Await all data fetching to ensure no streaming
   const { page: pageParam, per_page: perPageParam } = await searchParams;
   const page = Number(pageParam) || 1;
-  const perPage = Number(perPageParam) || 20; // Changed to 20 posts per page
+  const perPage = Number(perPageParam) || 19;
 
-  // Fetch all data synchronously - no streaming
   const result = await getBlogPosts(page, perPage);
 
   if (!result.success) {
@@ -59,9 +57,8 @@ export default async function HomePage({ searchParams }: BlogPageProps) {
   const featuredPost = posts[0];
   const remainingPosts = posts.slice(1);
 
-  const changerSizeOptions = Array.from({ length: 4 }, (_, i) => (i + 1) * 20); // Updated to match 20 posts per page
+  const changerSizeOptions = Array.from({ length: 4 }, (_, i) => (i + 1) * 19);
 
-  // Render complete page without any streaming/suspense
   return (
     <div className="w-full">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-y-16 gap-x-10 py-10">
@@ -70,7 +67,7 @@ export default async function HomePage({ searchParams }: BlogPageProps) {
           <Postcard key={post.id} post={post} />
         ))}
       </div>
-      {/* Only show pagination if there are more pages */}
+
       {totalPages > 1 && (
         <BlogPagination
           totalPosts={totalPosts}

@@ -46,7 +46,7 @@ export default async function SearchPage({ searchParams }: Props) {
   } = await searchParams;
   const query = queryParam || "";
   const page = Number(pageParam) || 1;
-  const perPage = Number(perPageParam) || 20; // Changed to 20 posts per page
+  const perPage = Number(perPageParam) || 19; // Changed to 19 posts per page for search
 
   let posts: postDatatype[] = [];
   let totalPosts = 0;

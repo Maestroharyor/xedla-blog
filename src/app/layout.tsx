@@ -95,7 +95,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <NextTopLoader />
+        <NextTopLoader color="#470973" height={3} />
         <div className="dark:bg-gray-800">
           <MainHeader />
           <MobileHeader />

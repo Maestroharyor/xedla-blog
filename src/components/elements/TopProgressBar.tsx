@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState } from "react";
 
 interface ProgressBarProps {
@@ -45,6 +46,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
     padding: 0,
     position: "fixed",
     top: 0,
+    left: 0,
     zIndex: 102,
     height: `${height}px`,
     width: scrollWidth || "0", // Ensure that width is not null
