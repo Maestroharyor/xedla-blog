@@ -75,6 +75,37 @@ export async function fetchCategoryBySlug(slug: string) {
   return response.data[0] as categoryDatatype;
 }
 
+export async function fetchCategoryById(id: number) {
+  const response = await apiClient.get(`/categories/${id}`);
+  return response.data as categoryDatatype;
+}
+
+export async function fetchPostsByCategory({
+  categoryId,
+  page = 1,
+  perPage = 10,
+}: {
+  categoryId: number;
+  page?: number;
+  perPage?: number;
+}) {
+  const params = new URLSearchParams({
+    _embed: "true",
+    page: page.toString(),
+    per_page: perPage.toString(),
+    categories: categoryId.toString(),
+    status: "publish",
+  });
+
+  const response = await apiClient.get(`/posts?${params.toString()}`);
+
+  return {
+    posts: response.data as postDatatype[],
+    totalPosts: parseInt(response.headers["x-wp-total"] || "0"),
+    totalPages: parseInt(response.headers["x-wp-totalpages"] || "0"),
+  };
+}
+
 export async function fetchPostSlugs() {
   const response = await apiClient.get("/posts?_fields=slug&per_page=100");
   return response.data.map((post: { slug: string }) => post.slug);

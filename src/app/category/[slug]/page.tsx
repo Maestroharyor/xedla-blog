@@ -1,4 +1,4 @@
-import { getCategoryPosts } from "@/actions/blog";
+import { getPostsByCategory } from "@/actions/blog";
 import Postcard from "@/components/partials/cards/Postcard";
 import BlogPagination from "@/components/partials/BlogPagination";
 import { generateCategoryStaticParams } from "@/lib/static-params";
@@ -20,8 +20,8 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const categorySlug = slug.split("-")[0]; // Extract slug before ID
-  const result = await getCategoryPosts(categorySlug, 1, 1);
+  const categoryId = parseInt(extractIdNumber(slug)); // Extract ID from slug
+  const result = await getPostsByCategory(categoryId, 1, 1);
 
   if (!result.success || !result.data.category) {
     return {
@@ -64,9 +64,9 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   const { page: pageParam, per_page: perPageParam } = await searchParams;
   const page = Number(pageParam) || 1;
   const perPage = Number(perPageParam) || 18; // Changed to 18 posts per page for categories
-  const categorySlug = slug.split("-")[0]; // Extract slug before ID
+  const categoryId = parseInt(extractIdNumber(slug)); // Extract ID from slug
 
-  const result = await getCategoryPosts(categorySlug, page, perPage);
+  const result = await getPostsByCategory(categoryId, page, perPage);
 
   if (!result.success || !result.data.category) {
     notFound();

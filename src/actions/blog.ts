@@ -4,7 +4,9 @@ import {
   fetchPosts,
   fetchPostBySlug,
   fetchCategoryBySlug,
+  fetchCategoryById,
   fetchCategories,
+  fetchPostsByCategory,
 } from "@/lib/api";
 import { postDatatype, categoryDatatype } from "@/types";
 
@@ -70,6 +72,46 @@ export async function getCategoryPosts(
     return {
       success: false,
       error: "Failed to fetch category posts",
+      data: { posts: [], totalPosts: 0, totalPages: 0, category: null },
+    };
+  }
+}
+
+export async function getPostsByCategory(
+  categoryId: number,
+  page: number = 1,
+  perPage: number = 10
+) {
+  try {
+    // Fetch category by ID
+    const category = await fetchCategoryById(categoryId);
+    if (!category) {
+      return {
+        success: false,
+        error: "Category not found",
+        data: { posts: [], totalPosts: 0, totalPages: 0, category: null },
+      };
+    }
+
+    // Fetch posts by category ID
+    const result = await fetchPostsByCategory({
+      categoryId,
+      page,
+      perPage,
+    });
+
+    return {
+      success: true,
+      data: {
+        ...result,
+        category,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching posts by category:", error);
+    return {
+      success: false,
+      error: "Failed to fetch posts by category",
       data: { posts: [], totalPosts: 0, totalPages: 0, category: null },
     };
   }
