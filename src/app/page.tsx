@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   },
 };
 
-export const revalidate = 60; // ISR revalidation every 10 minutes
+export const revalidate = 60;
 
 interface BlogPageProps {
   searchParams: SearchParams;
