@@ -9,12 +9,6 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
-export const revalidate = 10; // ISR revalidation
-
-export async function generateStaticParams() {
-  return generatePostStaticParams();
-}
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const result = await getPostBySlug(slug);

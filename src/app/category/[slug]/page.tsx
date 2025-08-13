@@ -1,7 +1,6 @@
 import { getPostsByCategory } from "@/actions/blog";
 import Postcard from "@/components/partials/cards/Postcard";
 import BlogPagination from "@/components/partials/BlogPagination";
-import { generateCategoryStaticParams } from "@/lib/static-params";
 import { extractIdNumber } from "@/utils";
 import { capitalize } from "lodash";
 import { Metadata } from "next";
@@ -12,10 +11,41 @@ type Props = {
   searchParams: Promise<{ page?: string; per_page?: string }>;
 };
 
-export const revalidate = 10; // ISR revalidation
+export const revalidate = 60; // ISR revalidation every 60 seconds
 
+// Generate static params for all categories at build time
 export async function generateStaticParams() {
-  return generateCategoryStaticParams();
+  try {
+    // Import the function we need from actions
+    const { getAllCategories } = await import("@/actions/blog");
+
+    // Fetch all categories
+    const categoriesResult = await getAllCategories();
+
+    if (!categoriesResult.success) {
+      console.warn(
+        "Failed to fetch categories for generateStaticParams:",
+        categoriesResult.error
+      );
+      return [];
+    }
+
+    // Generate slug parameters for all categories
+    const params = categoriesResult.data.map((category) => ({
+      slug: `${category.slug}-${category.id}`,
+    }));
+
+    console.log(
+      `Generated ${params.length} category static params:`,
+      params.map((p) => p.slug)
+    );
+
+    return params;
+  } catch (error) {
+    console.error("Error in generateStaticParams for categories:", error);
+    // Return empty array on error to allow dynamic rendering
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

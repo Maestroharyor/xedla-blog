@@ -10,7 +10,7 @@ if (!API_BASE_URL) {
 // Create centralized axios instance
 export const apiClient = axios.create({
   baseURL: `${API_BASE_URL}/wp-json/wp/v2`,
-  timeout: 10000,
+  timeout: 300_000,
   headers: {
     "Content-Type": "application/json",
   },
